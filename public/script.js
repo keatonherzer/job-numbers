@@ -17,6 +17,7 @@ const db = firebase.database();
 // DOM Elements
 const jobNumberElement = document.getElementById("job-number");
 const newJobBtn = document.getElementById("new-job-btn");
+const undoBtn = document.getElementById("undo-btn");
 
 // Function to fetch the job number
 function fetchJobNumber() {
@@ -41,8 +42,22 @@ function incrementJobNumber() {
   });
 }
 
+// Function to decrement the job number
+function decrementJobNumber() {
+  const jobRef = db.ref("jobNumber");
+  jobRef.get().then((snapshot) => {
+    let currentJobNumber = snapshot.exists() ? snapshot.val() : 0;
+    if (currentJobNumber > 0) { // Ensure the job number doesn't go below 0
+      const newJobNumber = currentJobNumber - 1;
+      jobRef.set(newJobNumber);
+      jobNumberElement.textContent = newJobNumber;
+    }
+  });
+}
+
 // Event Listener
 newJobBtn.addEventListener("click", incrementJobNumber);
+undoBtn.addEventListener("click", decrementJobNumber);
 
 // Initial Fetch
 fetchJobNumber();
