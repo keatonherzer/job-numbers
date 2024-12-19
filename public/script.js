@@ -19,15 +19,18 @@ const jobNumberElement = document.getElementById("job-number");
 const newJobBtn = document.getElementById("new-job-btn");
 const undoBtn = document.getElementById("undo-btn");
 
-// Function to fetch the job number
-// Function to fetch the job number
+// Function to fetch the job number and initialize it to 300000 if missing
 function fetchJobNumber() {
   const jobRef = db.ref("jobNumber");
   jobRef.get().then((snapshot) => {
     if (snapshot.exists()) {
+      // Display the existing job number
       jobNumberElement.textContent = snapshot.val();
     } else {
-      jobNumberElement.textContent = "0"; // Default if no value exists
+      // Initialize the job number to 300000 if it doesn't exist
+      const initialJobNumber = 300000;
+      jobRef.set(initialJobNumber);
+      jobNumberElement.textContent = initialJobNumber;
     }
     undoBtn.disabled = true; // Disable "Undo" button on page load
   });
@@ -37,7 +40,7 @@ function fetchJobNumber() {
 function incrementJobNumber() {
   const jobRef = db.ref("jobNumber");
   jobRef.get().then((snapshot) => {
-    let currentJobNumber = snapshot.exists() ? snapshot.val() : 0;
+    let currentJobNumber = snapshot.exists() ? snapshot.val() : 300000; // Default to 300000 if missing
     const newJobNumber = currentJobNumber + 1;
     jobRef.set(newJobNumber);
     jobNumberElement.textContent = newJobNumber;
@@ -51,8 +54,8 @@ function incrementJobNumber() {
 function decrementJobNumber() {
   const jobRef = db.ref("jobNumber");
   jobRef.get().then((snapshot) => {
-    let currentJobNumber = snapshot.exists() ? snapshot.val() : 0;
-    if (currentJobNumber > 0) { // Ensure the job number doesn't go below 0
+    let currentJobNumber = snapshot.exists() ? snapshot.val() : 300000; // Default to 300000 if missing
+    if (currentJobNumber > 300000) { // Ensure the job number doesn't go below 300000
       const newJobNumber = currentJobNumber - 1;
       jobRef.set(newJobNumber);
       jobNumberElement.textContent = newJobNumber;
