@@ -20,14 +20,16 @@ const newJobBtn = document.getElementById("new-job-btn");
 const undoBtn = document.getElementById("undo-btn");
 
 // Function to fetch the job number
+// Function to fetch the job number
 function fetchJobNumber() {
   const jobRef = db.ref("jobNumber");
   jobRef.get().then((snapshot) => {
     if (snapshot.exists()) {
       jobNumberElement.textContent = snapshot.val();
     } else {
-      jobNumberElement.textContent = "300000"; // Default if no value exists
+      jobNumberElement.textContent = "0"; // Default if no value exists
     }
+    undoBtn.disabled = true; // Disable "Undo" button on page load
   });
 }
 
@@ -39,6 +41,9 @@ function incrementJobNumber() {
     const newJobNumber = currentJobNumber + 1;
     jobRef.set(newJobNumber);
     jobNumberElement.textContent = newJobNumber;
+
+    // Enable the "Undo" button after incrementing
+    undoBtn.disabled = false;
   });
 }
 
@@ -51,9 +56,13 @@ function decrementJobNumber() {
       const newJobNumber = currentJobNumber - 1;
       jobRef.set(newJobNumber);
       jobNumberElement.textContent = newJobNumber;
+
+      // Disable the "Undo" button again after undoing
+      undoBtn.disabled = true;
     }
   });
 }
+
 
 // Event Listener
 newJobBtn.addEventListener("click", incrementJobNumber);
